@@ -20,7 +20,6 @@ var connection = mysql.createConnection({
 	user     : 'root',
 	password : '',
     database : 'ameliadatabase'
-    
 });
 
 const storage = multer.diskStorage({
@@ -63,15 +62,14 @@ app.use(session({
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
-
-
 app.use(function(req, res, next) {
 	res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 	res.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 	res.setHeader("Expires", "0"); // Proxies.
 	res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
 	next();
-  });
+});
+
 app.get("/home",(req,res)=>{
     res.render("home")
 })
@@ -293,10 +291,10 @@ app.post("/editproduct/:id",function (req, res, next) {
         res.redirect("/admin")
         res.end()
     }
-  })
+})
 
 
-  app.post("/editproduct/:id/img", upload.single('image') ,function(req,res){
+app.post("/editproduct/:id/img", upload.single('image') ,function(req,res){
     if(req.session.adminlogin){
         var productid = req.params.id;
         var productdata = req.body;
@@ -320,7 +318,7 @@ app.post("/editproduct/:id",function (req, res, next) {
         res.redirect("/admin")
         res.end()
     }
-  })
+})
 
 app.get("/deleteproduct/:id",function(req,res){
     if(req.session.adminlogin){
@@ -447,7 +445,6 @@ app.get("/history/:id",function(req,res){
 
 app.use("/purchase",function (req,res) {
 
-    
     var historykey = req.body.stripeTokenId
     // console.log(historykey)
     async function purchase()
@@ -483,7 +480,6 @@ app.use("/purchase",function (req,res) {
         // console.log(history)
         console.log(history)
 
-
         const addpaymentkey = await new Promise(function(resolve, reject) {
             var sql = "INSERT INTO paymentkey SET payment_key =? ,payment_createby=?,payment_createdat=?,payment_total=?";
             connection.query(sql,[historykey,req.session.username, Date.now() ,total ], function(err, results, field) {
@@ -508,7 +504,6 @@ app.use("/purchase",function (req,res) {
                 }
             })})
 
-
         stripe.charges.create({
             amount: total*100,
             source: req.body.stripeTokenId,
@@ -520,21 +515,16 @@ app.use("/purchase",function (req,res) {
             console.log("Charge Fail")
             res.status(500).end()
         })
-
-
     }
+
     if(req.session.login){
     purchase()
-    
     }else{
     alert("go to login first")
     res.redirect("/login")
     res.end()
     }
    
-          
-
-
 })
 
 app.get("*",function(req,res){
