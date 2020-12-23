@@ -4,23 +4,25 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var path = require('path');
 var app = express();
-var port = process.env.port || 8080;
+var port = process.env.port || 8000;
 var multer  = require('multer');
 var alert  = require('alert');
 const fs = require("fs");
 const { timeStamp } = require('console');
+const { callbackify } = require('util');
 
 
 const stripeSecretKey = "sk_test_51HvLrgL12Pwp7AQ0cwhAoeATpUukVrdtX1F5JjEet1L533pcjkXKEBF2crxIFIUP7hoCYOsHR3XvoC46ZyEZUkR300UaSFQoGh";
 const stripePublicKey = "pk_test_51HvLrgL12Pwp7AQ0M58mV89BiB82AQXKDVcXv4WuNwvJKwEZP9q5jH9OqXZL0pBxYeuz1JiIetsgx7I0e6CuFLME00nImFRPRT";
 const stripe = require('stripe')(stripeSecretKey)
 
-var connection = mysql.createConnection({
-	host     : 'localhost',
+var connection = mysql.createConnection({  //MAMP จำเป็นต้องกำหนด host post socketpath ตังหาก ต่างจาก XAPP
+	host     : '127.0.0.1',
 	user     : 'root',
-	password : '',
-    database : 'ameliadatabase'
-    
+	password : 'root',
+    database : 'DB',
+    port : "3306",
+    socketPath: "/Applications/MAMP/tmp/mysql/mysql.sock"
 });
 
 const storage = multer.diskStorage({
@@ -36,7 +38,6 @@ const storage = multer.diskStorage({
         cb(null, filename[0]+Date.now()+"."+filename[1])
     }
 });
-
 
 const upload = multer({
     storage: storage,
@@ -78,8 +79,10 @@ app.get("/home",(req,res)=>{
 
 app.post("/home",function(req,res){
     var contactus = req.body;
-    connection.query("INSERT INTO `ContactUS`(`name`, `email`, `topic`, `message`,`date` ) VALUES (?,?,?,?,?)", [contactus.name,contactus.email,contactus.topic,contactus.message,contactus.date], function(error, results, fields) {
+    connection.query("INSERT INTO `ContactUS`(`name`, `email`, `topic`, `message`,`date` ) VALUES (?,?,?,?,?)", [contactus.name,contactus.email,contactus.topic,contactus.message,contactus.date], function(error, results, fields) {        
         console.log(contactus)
+        console.log(results)
+
         if (error) {
             alert("Please check agian")
             res.redirect("/home")
@@ -122,7 +125,11 @@ app.get("/login",function(req,res){
 })
 app.post("/login",function(req,res){
     var loginaccount = req.body;
+    console.log(loginaccount)
     connection.query("SELECT * FROM `member` WHERE username = ? AND password = ? OR email = ? AND password = ?", [loginaccount.usernameoremail,loginaccount.password,loginaccount.usernameoremail,loginaccount.password], function(error, results, fields) {
+        console.log(results);
+        // var v=results.length
+        // console.log(v)
         if (error || results.length < 1) {
             alert("your username or email not found or password not correct")
             res.redirect("/login")
@@ -345,6 +352,18 @@ app.get("/deleteproduct/:id",function(req,res){
     }
 })
 
+app.get("/showsql", (req,res) => {
+    connection.query("SELECT * from product", function(error, results, fields) {
+    if(error){
+        console.log(error)
+        res.send(error)
+    }
+    else{
+        res.send(results)
+    }
+    })
+})
+
 app.get("/productlist",function(req,res){
     if(req.session.adminlogin){
     connection.query("SELECT * from product", function(error, results, fields) {
@@ -377,6 +396,7 @@ app.get("/store",function(req,res){
         login = false;
     }
     connection.query("SELECT * FROM `product`", function(error, results, fields) {
+
         if (error || results.length < 1) {
             alert("not found product")
             res.render("store",{
@@ -537,6 +557,7 @@ app.use("/purchase",function (req,res) {
 
 })
 
+
 app.get("*",function(req,res){
 	res.send("page not found.")
 	res.end()
@@ -546,3 +567,4 @@ app.get("*",function(req,res){
 app.listen(port, () => {
   console.log("Server Connected!!");
 })
+
