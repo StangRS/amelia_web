@@ -387,6 +387,29 @@ app.get("/productlist",function(req,res){
     }
 })
 
+app.get("/commentlist",function(req,res){
+    if(req.session.adminlogin){
+    connection.query("SELECT * from ContactUs", function(error, results, fields) {
+        if (error) {
+            alert("database failed")
+            res.redirect("/admin")
+            res.end()
+        }
+        else{
+            res.render("commentlist",{
+                commentdata:results
+            })            
+            res.end()
+        };
+    })
+    }
+    else{
+        alert("go back to login for admin first")
+        res.redirect("/admin")
+        res.end()
+    }
+})
+
 app.get("/store",function(req,res){
     var login;
     if(req.session.login){
