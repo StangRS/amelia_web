@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment List</title>
+    <link rel="stylesheet" href="/css/fontstyle.css">
+    <style>
+        *{
+            outline: none;
+            padding: 0%;
+            margin: 0%;
+            box-sizing: border-box;
+        }
+        .header a{
+            text-decoration: none;
+            color: white;
+        }
+        .header{
+            display: flex;
+            background: black;
+            color: white;
+            line-height: 50px;
+            padding: 0 10px;
+
+        }
+        .logo{
+            margin-right: auto;
+        }
+        .body{
+            padding: 50px;
+        }
+        .searchbar{
+            height: 40px;
+            display: flex;
+            line-height: 40px;
+        }
+        .searchbar .searchinput{
+            display: inline-block;
+            height: 100%;
+            width: 300px;
+            padding: 10px;
+            outline: none;
+        }
+
+        .menuforadmin{
+            display: flex;
+            line-height: 40px;
+        }
+        .headlist{
+            margin-right: auto;
+        }
+        table {
+        margin:0 auto;
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 1200px;
+        }
+
+        td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        }
+
+        tr:nth-child(even) {
+        background-color: #dddddd;
+        }
+
+        .productlist{
+        margin-top: 50px;
+        }
+
+        button{
+            cursor: pointer;
+            outline: none;
+            border: none;
+            width: 100px;
+            line-height: 40px;
+        }
+        button#edit{
+            color: white;
+            background: rgb(236, 162, 0);
+        }
+        button#delete{
+            color: white;
+            background: red;
+        }
+        th,button{
+            text-align: center;
+        }
+        td#btn,td#price{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    
+    <%
+    var commentdata;
+    var commentlist = commentdata || []
+    %>
+    
+    <div class="header">
+        <div class="logo"><a href="/productlist">AMELIA</a></div>
+        <div class="menulink">
+            <a href="/productlist">Product List</a>&nbsp; &nbsp; 
+            <a href="/commentlist">Comment</a>&nbsp; &nbsp; 
+            <a href="/logout">LOGOUT</a>
+        </div>
+    </div>
+    <div class="body">
+        <div class="menuforadmin">
+        <div class="headlist">Comment</div>
+
+        <table class="commentlist">
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Topic</th>
+              <th>Message</th>
+              <th>Date</th>
+
+            </tr>
+            <%if(commentlist.length > 0){
+            for(var i=0; i<commentlist.length; i++){
+            %>
+            <tr class="productlists" id="<%=commentlist[i].name%>">
+              <td id="name"><%=commentlist[i].name%></td>
+              <td id="email"><%=commentlist[i].email%></td>
+              <td id="topic"><%=commentlist[i].topic%></td>
+              <td id="message"><%=commentlist[i].message%>฿</td>
+              <td id="date"><%=commentlist[i].date%>฿</td>
+            </tr>
+            <%}}else{%>
+            <tr><td colspan="6" style="text-align: center;">Not found any comment</td></tr>
+            <%}%>
+          </table>
+          <script>
+              function changelocation(path){
+                window.location.href = path;
+              }
+
+              var tablerow = document.querySelectorAll(".commentlists")
+              var searchbar = document.querySelector("input.searchinput");
+              searchbar.addEventListener("input",function(){
+                  if(this.value != ""){
+                  tablerow.forEach(function(ele){
+                      if(!ele.id.includes(searchbar.value)){
+                          ele.style.display = "none"
+                      }
+                  })
+                  }
+                  else{
+                    tablerow.forEach(function(ele){
+                          ele.style.display = "";
+                  })
+                  }
+              })
+
+            function clearbtn(){
+                var tablerow = document.querySelectorAll(".commentlists")
+                var searchbar = document.querySelector("input.searchinput");
+                searchbar.value = ""
+                tablerow.forEach(function(ele){
+                          ele.style.display = "";
+                })
+            }
+          </script>
+    </div>
+</body>
+</html>
