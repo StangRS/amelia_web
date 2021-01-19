@@ -105,7 +105,7 @@
         <div class="logo"><a href="/productlist">AMELIA</a></div>
         <div class="menulink">
             <a href="/productlist">Product List</a>&nbsp; &nbsp; 
-            <a href="/commentlist">Comment</a>&nbsp; &nbsp; 
+            <a href="/commentlist">Comment List</a>&nbsp; &nbsp; 
             <a href="/logout">LOGOUT</a>
         </div>
     </div>
@@ -125,7 +125,7 @@
             <%if(commentlist.length > 0){
             for(var i=0; i<commentlist.length; i++){
             %>
-            <tr class="productlists" id="<%=commentlist[i].name%>">
+            <tr class="commentlists" id="<%=commentlist[i].name%>">
               <td id="name"><%=commentlist[i].name%></td>
               <td id="email"><%=commentlist[i].email%></td>
               <td id="topic"><%=commentlist[i].topic%></td>
